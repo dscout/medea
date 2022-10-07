@@ -18,7 +18,7 @@ defmodule Medea.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4"},
-      {:stream_data, "~> 0.5", only: [:test]}
+      {:stream_data, "~> 0.5", only: [:dev, :test]}
     ]
   end
 end
