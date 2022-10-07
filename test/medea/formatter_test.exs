@@ -24,7 +24,7 @@ defmodule Medea.FormatterTest do
     end
 
     test "formatting log datetimes" do
-      assert %{"time" => "2022-10-06 16:38:00.000"} = format(:info, "boop", @datetime)
+      assert %{"time" => "2022-10-06T16:38:00.000"} = format(:info, "boop", @datetime)
     end
 
     test "formatting log metadata" do

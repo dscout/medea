@@ -23,7 +23,7 @@ defmodule Medea.Translator do
     encoded =
       message
       |> Utils.clean()
-      |> Jason.encode!()
+      |> Jason.encode_to_iodata!()
 
     {:ok, encoded}
   end

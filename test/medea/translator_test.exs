@@ -10,7 +10,7 @@ defmodule Medea.TranslatorTest do
       check all message <- message() do
         assert {:ok, iodata} = Translator.translate(:info, :info, :report, {:logger, message})
 
-        assert is_binary(iodata)
+        assert is_list(iodata) or is_binary(iodata)
       end
     end
 

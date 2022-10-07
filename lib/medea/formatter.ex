@@ -3,8 +3,6 @@ defmodule Medea.Formatter do
   A formatter for JSON logs.
   """
 
-  import Jason.Helpers, only: [json_map: 1]
-
   alias Medea.Utils
 
   @type time :: Logger.Formatter.time()
@@ -14,9 +12,12 @@ defmodule Medea.Formatter do
   """
   @spec format(Logger.level(), Logger.message(), time(), keyword()) :: IO.chardata()
   def format(level, message, time, metadata) do
-    [level: level, time: format_time(time), message: message, metadata: Utils.clean(metadata)]
-    |> json_map()
-    |> Jason.encode_to_iodata!()
+    formatted =
+      binding()
+      |> Enum.map(fn {key, val} -> [?", to_string(key), ?", ?:, format(key, val)] end)
+      |> Enum.intersperse(?,)
+
+    [?{, formatted, ?}, ?\n]
   rescue
     exception ->
       reason = Exception.format_banner(:error, exception)
@@ -24,9 +25,20 @@ defmodule Medea.Formatter do
       [~s({"error":"could not log '), inspect(message), "' because: ", reason, ~s("})]
   end
 
-  defp format_time({date, {h, m, s, ms}}) do
+  defp format(:level, level), do: Jason.encode_to_iodata!(level)
+
+  defp format(:message, message) when is_list(message), do: message
+  defp format(:message, message), do: Jason.encode_to_iodata!(message)
+
+  defp format(:metadata, metadata) do
+    metadata
+    |> Utils.clean()
+    |> Jason.encode_to_iodata!()
+  end
+
+  defp format(:time, {date, {h, m, s, ms}}) do
     {date, {h, m, s}}
     |> NaiveDateTime.from_erl!({ms, 3})
-    |> NaiveDateTime.to_string()
+    |> Jason.encode_to_iodata!()
   end
 end
