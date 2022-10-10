@@ -26,4 +26,24 @@ defmodule MedeaTest do
     assert capture_message(pid: self()) =~ ~s({"pid":"#PID<0)
     assert capture_message(ref: make_ref()) =~ ~s({"ref":"#Reference<0)
   end
+
+  test "logging fall-through translated messages" do
+    {:ok, pid} =
+      Task.start(fn ->
+        receive do
+          :go -> raise "oops"
+        end
+      end)
+
+    logged =
+      capture_log(fn ->
+        ref = Process.monitor(pid)
+
+        send(pid, :go)
+
+        receive do: ({:DOWN, ^ref, _, _, _} -> :ok)
+      end)
+
+    assert logged =~ ~s("message":"Task #PID)
+  end
 end

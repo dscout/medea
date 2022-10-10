@@ -30,7 +30,9 @@ defmodule Medea.Formatter do
   end
 
   defp to_val(:level, level), do: Jason.encode_to_iodata!(level)
-  defp to_val(:message, message) when is_list(message), do: message
+
+  defp to_val(:message, ["{\"" | _] = message), do: message
+  defp to_val(:message, message) when is_list(message), do: [?", message, ?"]
   defp to_val(:message, message), do: Jason.encode_to_iodata!(message)
 
   defp to_val(:metadata, metadata) do
