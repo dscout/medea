@@ -14,7 +14,7 @@ defmodule Medea.Formatter do
   def format(level, message, time, metadata) do
     formatted =
       binding()
-      |> Enum.map(fn {key, val} -> [?", to_string(key), ?", ?:, format(key, val)] end)
+      |> Enum.map(fn {key, val} -> [to_key(key), to_val(key, val)] end)
       |> Enum.intersperse(?,)
 
     [?{, formatted, ?}, ?\n]
@@ -25,18 +25,21 @@ defmodule Medea.Formatter do
       [~s({"error":"could not log '), inspect(message), "' because: ", reason, ~s("})]
   end
 
-  defp format(:level, level), do: Jason.encode_to_iodata!(level)
+  for key <- ~w(level message time metadata)a do
+    defp to_key(unquote(key)), do: [?", to_string(unquote(key)), ?", ?:]
+  end
 
-  defp format(:message, message) when is_list(message), do: message
-  defp format(:message, message), do: Jason.encode_to_iodata!(message)
+  defp to_val(:level, level), do: Jason.encode_to_iodata!(level)
+  defp to_val(:message, message) when is_list(message), do: message
+  defp to_val(:message, message), do: Jason.encode_to_iodata!(message)
 
-  defp format(:metadata, metadata) do
+  defp to_val(:metadata, metadata) do
     metadata
     |> Utils.clean()
     |> Jason.encode_to_iodata!()
   end
 
-  defp format(:time, {date, {h, m, s, ms}}) do
+  defp to_val(:time, {date, {h, m, s, ms}}) do
     {date, {h, m, s}}
     |> NaiveDateTime.from_erl!({ms, 3})
     |> Jason.encode_to_iodata!()
