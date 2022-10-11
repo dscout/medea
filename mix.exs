@@ -28,8 +28,8 @@ defmodule Medea.MixProject do
       # Docs
       name: "Medea",
       docs: [
-        main: "Medea",
-        extras: ["CHANGELOG.md"],
+        main: "Readme",
+        extras: ["README.md", "CHANGELOG.md"],
         formatters: ["html"],
         source_ref: "v#{@version}",
         source_url: "https://github.com/dscout/medea"
