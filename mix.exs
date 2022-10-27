@@ -28,7 +28,7 @@ defmodule Medea.MixProject do
       # Docs
       name: "Medea",
       docs: [
-        main: "Readme",
+        main: "readme",
         extras: ["README.md", "CHANGELOG.md"],
         formatters: ["html"],
         source_ref: "v#{@version}",
