@@ -25,7 +25,8 @@ defmodule Medea.TranslatorTest do
       binary(),
       tuple({key(), val()}),
       map_of(key(), val()),
-      keyword_of(val())
+      keyword_of(val()),
+      list_of(one_of([tuple({key(), val()}), atom(:alphanumeric)]))
     ])
   end
 

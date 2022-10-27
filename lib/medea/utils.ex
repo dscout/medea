@@ -16,14 +16,14 @@ defmodule Medea.Utils do
     for {key, val} <- map, into: %{}, do: {clean(key), clean(val)}
   end
 
-  def clean([{key, _val} | _] = keyword) when is_atom(key) do
-    keyword
-    |> Map.new()
-    |> clean()
-  end
-
   def clean(list) when is_list(list) do
-    for elem <- list, do: clean(elem)
+    if Keyword.keyword?(list) do
+      list
+      |> Map.new()
+      |> clean()
+    else
+      for elem <- list, do: clean(elem)
+    end
   end
 
   def clean(tuple) when is_tuple(tuple) do
