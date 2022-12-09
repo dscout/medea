@@ -11,6 +11,7 @@ defmodule Medea.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
+      consolidate_protocols: Mix.env() != :test,
       preferred_cli_env: [
         "test.ci": :test
       ],
