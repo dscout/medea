@@ -19,7 +19,7 @@ defmodule Medea.Utils do
   end
 
   def clean(map) when is_map(map) do
-    for {key, val} <- map, into: %{}, do: {clean(key), clean(val)}
+    for {key, val} <- map, into: %{}, do: {clean_key(key), clean(val)}
   end
 
   def clean(list) when is_list(list) do
@@ -42,6 +42,9 @@ defmodule Medea.Utils do
   def clean(term) when is_pid(term) or is_reference(term), do: inspect(term)
   def clean(term) when is_port(term) or is_function(term), do: inspect(term)
   def clean(term), do: term
+
+  defp clean_key(key) when is_atom(key) or is_binary(key), do: key
+  defp clean_key(key), do: inspect(key)
 
   defp clean_struct(struct) do
     struct

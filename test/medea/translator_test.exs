@@ -57,7 +57,8 @@ defmodule Medea.TranslatorTest do
       tuple({key(), val()}),
       map_of(key(), val()),
       keyword_of(val()),
-      list_of(one_of([tuple({key(), val()}), atom(:alphanumeric)]))
+      list_of(one_of([tuple({key(), val()}), atom(:alphanumeric)])),
+      map_of(list_of(atom(:alphanumeric)), val())
     ])
   end
 
