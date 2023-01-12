@@ -8,6 +8,12 @@
   "bar"]` or a map, etc., we'll allow strings or atoms as before, but `inspect`
   otherwise.
 
+* Check for implementation of Jason.Encoder for structs
+
+  If a struct has a custom implementation of `Jason.Encoder` we'll clean the
+  internals but put everything back where we found it so the custom
+  implementation could redact fields, for example.
+
 ## v0.1.1 — 2022-12-06
 
 * Ensure full keyword list before encoding as map
