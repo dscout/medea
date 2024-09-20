@@ -52,7 +52,7 @@ The package can be installed by adding `medea` to your list of dependencies in
 ```elixir
 def deps do
   [
-    {:medea, "~> 0.1"}
+    {:medea, "~> 0.2"}
   ]
 end
 ```
@@ -62,15 +62,15 @@ end
 Medea has two components: `Medea.Formatter` and `Medea.Translator`. For complete
 functionality, both components must be configured.
 
-First, configure the logger backend with the formatter:
+First, configure the default formatter:
 
 ```elixir
-config :logger, :console,
+config :logger, :default_formatter,
   format: {Medea.Formatter, :format},
   metadata: [:request_id]
 ```
 
-Next, enable the translator at the top of your applications `start/2` function:
+Next, enable the translator at the top of your `c:Application.start/2` function:
 
 ```elixir
 def start(_type, _args) do
@@ -92,13 +92,11 @@ If you're using Ecto, you should disable the default logger:
 config :my_app, MyApp.Repo, log: false
 ```
 
-Now replace it with a simple telemetry based instrumenter that logs structured
+Now replace it with a simple `:telemetry`-based handler that logs structured
 queries with metadata:
 
 ```elixir
 defmodule MyApp.EctoLogger do
-  @moduledoc false
-
   require Logger
 
   def handle_event(_event, measure, %{query: query, repo: repo}, level) do
@@ -109,8 +107,7 @@ defmodule MyApp.EctoLogger do
 end
 ```
 
-Attach the logger with telemetry:
-
+And attach:
 ```elixir
 :telemetry.attach(
   "ecto-logger",
