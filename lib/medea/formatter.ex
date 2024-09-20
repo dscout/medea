@@ -5,7 +5,7 @@ defmodule Medea.Formatter do
 
   alias Medea.Utils
 
-  @type time :: Logger.Formatter.time()
+  @type time :: Logger.Formatter.date_time_ms()
 
   @doc """
   Format messages into structured JSON logs.
