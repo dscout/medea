@@ -3,22 +3,11 @@ defmodule Medea.Translator do
   Translates structured log "reports" into encoded JSON iodata.
   """
 
+  @behaviour Logger.Translator
+
   alias Medea.Utils
 
-  @type kind :: :format | :report
-  @type level :: Logger.level()
-  @type report :: :logger.report()
-
-  @type result ::
-          {:ok, iodata(), keyword()}
-          | {:ok, iodata()}
-          | :skip
-          | :none
-
-  @doc """
-  Translate a report into encoded JSON iodata or fall through to the default translator.
-  """
-  @spec translate(level(), level(), kind(), report()) :: result()
+  @impl Logger.Translator
   def translate(_min, _level, :report, {:logger, message}) do
     encoded =
       message

@@ -5,11 +5,8 @@ defmodule MedeaTest do
 
   require Logger
 
-  setup do
-    :ok = Logger.add_translator({Medea.Translator, :translate})
-    :ok = Logger.configure_backend(:console, format: {Medea.Formatter, :format})
-
-    :ok
+  setup_all do
+    Logger.add_translator({Medea.Translator, :translate})
   end
 
   defp capture_message(message) do
