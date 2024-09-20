@@ -26,7 +26,7 @@ defmodule Medea.Formatter do
   end
 
   for key <- ~w(level message time metadata)a do
-    defp to_key(unquote(key)), do: [?", to_string(unquote(key)), ?", ?:]
+    defp to_key(unquote(key)), do: [?", unquote(to_string(key)), ?", ?:]
   end
 
   defp to_val(:level, level), do: Jason.encode_to_iodata!(level)
