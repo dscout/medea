@@ -9,12 +9,12 @@ defmodule Medea.Utils do
   def clean(%Time{} = time), do: time
 
   # Structs should implement Jason.Encoder
-  def clean(%_{} = struct) do
-    if Encoder.Any != Encoder.impl_for(struct) do
-      map = clean_struct(struct)
-      struct!(struct, map)
-    else
+  def clean(%module{} = struct) do
+    if Encoder.Any == Encoder.impl_for(struct) or
+         module in Application.get_env(:medea, :except, []) do
       clean_struct(struct)
+    else
+      struct!(struct, clean_struct(struct))
     end
   end
 
