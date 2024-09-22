@@ -8,11 +8,17 @@ defmodule Medea.TranslatorTest do
   require Protocol
 
   defmodule Struct do
-    @moduledoc false
-
     defstruct id: 1,
               private: %{data: :hidden},
               public: %{data: :visible}
+  end
+
+  defmodule RaiseStruct do
+    defimpl Jason.Encoder do
+      def encode(_, _), do: raise("error")
+    end
+
+    defstruct key: :value
   end
 
   describe "translate/4" do
@@ -36,6 +42,15 @@ defmodule Medea.TranslatorTest do
 
       assert {:ok, iodata} = Translator.translate(:info, :info, :report, {:logger, %Struct{}})
       assert ~s({"id":1,"public":{"data":"visible"}}) == IO.chardata_to_string(iodata)
+    end
+
+    test "custom implementations can be ignored" do
+      Application.put_env(:medea, :except, [RaiseStruct])
+
+      assert {:ok, iodata} =
+               Translator.translate(:info, :info, :report, {:logger, %RaiseStruct{}})
+
+      assert ~s({"key":"value"}) == IO.chardata_to_string(iodata)
     end
 
     test "all non-logger formats or reports are ignored" do

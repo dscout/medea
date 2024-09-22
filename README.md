@@ -27,7 +27,7 @@ Logger.info(event: %{name: :stuff, safe: false}, user: %User{id: 123})
 
 Outputs nested JSON like this:
 
-```
+```json
 {
   "level":"info",
   "message":{
@@ -92,7 +92,7 @@ If you're using Ecto, you should disable the default logger:
 config :my_app, MyApp.Repo, log: false
 ```
 
-Now replace it with a simple `:telemetry`-based handler that logs structured
+Now replace it with a simple [telemetry](https://hexdocs.pm/telemetry/readme.html)-based handler that logs structured
 queries with metadata:
 
 ```elixir
@@ -108,6 +108,7 @@ end
 ```
 
 And attach:
+
 ```elixir
 :telemetry.attach(
   "ecto-logger",
@@ -115,6 +116,14 @@ And attach:
   &MyApp.EctoLogger.handle_event/4,
   :info
 )
+```
+
+Structs that implement [Jason.Encoder](https://hexdocs.pm/jason/Jason.Encoder.html) will use that protocol.
+If any implementation is undesirable, as is the case with `Ecto.Association.NotLoaded`
+and `Ecto.Schema.Metadata` which both raise errors as of `3.12.3`, it can be disabled at runtime.
+
+```elixir
+config, :medea, except: [Ecto.Association.NotLoaded, Ecto.Schema.Metadata]
 ```
 
 Additional documentation can be found at [https://hexdocs.pm/medea](https://hexdocs.pm/medea).
