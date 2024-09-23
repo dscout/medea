@@ -23,12 +23,10 @@ defmodule Medea.Utils do
   end
 
   def clean(list) when is_list(list) do
-    if Keyword.keyword?(list) do
-      list
-      |> Map.new()
-      |> clean()
-    else
-      for elem <- list, do: clean(elem)
+    cond do
+      List.improper?(list) -> list |> convert_to_proper_list([]) |> clean()
+      Keyword.keyword?(list) -> list |> Map.new() |> clean()
+      true -> Enum.map(list, &clean/1)
     end
   end
 
@@ -50,5 +48,15 @@ defmodule Medea.Utils do
     struct
     |> Map.from_struct()
     |> clean()
+  end
+
+  defp convert_to_proper_list([], acc), do: Enum.reverse(acc)
+
+  defp convert_to_proper_list([head | tail], acc) when is_list(tail) do
+    convert_to_proper_list(tail, [head | acc])
+  end
+
+  defp convert_to_proper_list([head | tail], acc) do
+    convert_to_proper_list([tail], [head | acc])
   end
 end

@@ -73,13 +73,12 @@ defmodule Medea.TranslatorTest do
       map_of(key(), val()),
       keyword_of(val()),
       list_of(one_of([tuple({key(), val()}), atom(:alphanumeric)])),
-      map_of(list_of(atom(:alphanumeric)), val())
+      map_of(list_of(atom(:alphanumeric)), val()),
+      maybe_improper_list_of(integer(), integer())
     ])
   end
 
   defp key, do: one_of([atom(:alphanumeric), string(:ascii)])
-
   defp val, do: one_of([atom(:alphanumeric), map_of(key(), key())])
-
   defp struct, do: map(random(), &%Struct{private: &1, public: &1})
 end
