@@ -118,12 +118,14 @@ And attach:
 )
 ```
 
+## Custom `Jason.Encoder` Implementations
+
 Structs that implement [Jason.Encoder](https://hexdocs.pm/jason/Jason.Encoder.html) will use that protocol.
 If any implementation is undesirable, as is the case with `Ecto.Association.NotLoaded`
 and `Ecto.Schema.Metadata` which both raise errors as of `3.12.3`, it can be disabled at runtime.
 
 ```elixir
-config, :medea, except: [Ecto.Association.NotLoaded, Ecto.Schema.Metadata]
+config :medea, except: [Ecto.Association.NotLoaded, Ecto.Schema.Metadata]
 ```
 
 Additional documentation can be found at [https://hexdocs.pm/medea](https://hexdocs.pm/medea).
