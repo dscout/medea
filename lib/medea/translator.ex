@@ -10,8 +10,8 @@ defmodule Medea.Translator do
   @impl Logger.Translator
   def translate(_min, _level, :report, {:logger, message}) do
     encoded =
-      message
-      |> Utils.clean()
+      []
+      |> Utils.clean(message)
       |> Jason.encode_to_iodata!()
 
     {:ok, encoded}

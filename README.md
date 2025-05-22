@@ -118,6 +118,60 @@ And attach:
 )
 ```
 
+## Custom logger formatting
+
+If you need to format certain values in the log set by other libraries,
+for example, `:otel_span_id` and `:otel_trace_id`, then you can configure
+medea to send certain keypaths to your own implementation.
+
+For example:
+
+Before:
+
+```json
+{
+  "level":"info",
+  "message":{"foo":"bar"},
+  "metadata":{
+    "otel_span_id":[0,1,2,3,4],
+    "otel_trace_id":[3,4,5]
+  },
+  "time":"2022-10-11T15:07:33.000"
+}
+```
+
+```elixir
+config :medea,
+  formatters: %{
+    [:metadata, :otel_span_id] => {MyApp.Logs, :format, []},
+    [:metadata, :otel_trace_id] => {MyApp.Logs, :format, []}
+  }
+```
+
+```elixir
+defmodule MyApp.Logs do
+  def format(_keypath, charlist) when is_list(charlist) do
+    to_string(charlist)
+  end
+
+  def format(_keypath, value), do: value
+end
+```
+
+After:
+
+```json
+{
+  "level":"info",
+  "message":{"foo":"bar"},
+  "metadata":{
+    "otel_span_id":"abc123",
+    "otel_trace_id":"def456"
+  },
+  "time":"2022-10-11T15:07:33.000"
+}
+```
+
 ## Custom `Jason.Encoder` Implementations
 
 Structs that implement [Jason.Encoder](https://hexdocs.pm/jason/Jason.Encoder.html) will use that protocol.
