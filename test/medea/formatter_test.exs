@@ -23,8 +23,6 @@ defmodule Medea.FormatterTest do
     def format(keypath, value) when keypath in @eligible and is_list(value) do
       to_string(value)
     end
-
-    def format(_keypath, value), do: value
   end
 
   describe "format/4" do

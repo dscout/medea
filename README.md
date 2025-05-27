@@ -124,6 +124,9 @@ If you need to format certain values in the log set by other libraries,
 for example, `:otel_span_id` and `:otel_trace_id`, then you can configure
 medea to send certain keypaths to your own implementation.
 
+This configuration relies on compile-time-only configuration for efficiency,
+so it cannot be set in `runtime.exs`.
+
 For example:
 
 Before:
@@ -153,8 +156,6 @@ defmodule MyApp.Logs do
   def format(_keypath, charlist) when is_list(charlist) do
     to_string(charlist)
   end
-
-  def format(_keypath, value), do: value
 end
 ```
 

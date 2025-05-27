@@ -36,7 +36,9 @@ defmodule Medea.Formatter do
   defp to_val(:message, message), do: Jason.encode_to_iodata!(message)
 
   defp to_val(:metadata, metadata) do
-    Jason.encode_to_iodata!(Utils.clean([:metadata], metadata))
+    [:metadata]
+    |> Utils.clean(metadata)
+    |> Jason.encode_to_iodata!()
   end
 
   defp to_val(:time, {date, {h, m, s, ms}}) do
