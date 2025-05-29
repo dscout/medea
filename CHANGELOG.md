@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.0 — 2025-05-29
+
+* Add escape-hatch for custom key value formatting
+
+  OpenTelemetry libraries add some metadata to logger, but they add them as charlists
+  (`otel_span_id` and `otel_trace_id`) which ends up as a list of integers in the JSON log. For
+  log correlation with some services (such as Datadog), they need these IDs to be in hex format,
+  which means I need to be able to hook into the log formatting for these particular keys and
+  values and format them.
+
+  This adds a compile-config-based escape hatch for formatting values in the logger message.
+
 ## v0.2.0 — 2024-09-23
 
 * Handle formatting improper lists
