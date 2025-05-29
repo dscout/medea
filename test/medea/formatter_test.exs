@@ -14,6 +14,17 @@ defmodule Medea.FormatterTest do
     |> Jason.decode!()
   end
 
+  defmodule EscapeHatch do
+    @eligible [
+      [:metadata, :otel_span_id],
+      [:metadata, :otel_trace_id]
+    ]
+
+    def format(keypath, value) when keypath in @eligible and is_list(value) do
+      to_string(value)
+    end
+  end
+
   describe "format/4" do
     property "encoding any messages as json iodata" do
       check all level <- level(), time <- datetime(), message <- message() do
@@ -21,6 +32,17 @@ defmodule Medea.FormatterTest do
 
         assert %{"level" => _, "time" => _, "message" => _} = decoded
       end
+    end
+
+    test "configured keys are sent to custom cleaners" do
+      metadata = [otel_span_id: ~c"abc123", otel_trace_id: ~c"def456"]
+
+      assert %{
+               "metadata" => %{
+                 "otel_span_id" => "abc123",
+                 "otel_trace_id" => "def456"
+               }
+             } = format(:info, "boop", @datetime, metadata)
     end
 
     test "formatting log datetimes" do
