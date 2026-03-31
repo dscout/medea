@@ -56,6 +56,18 @@ defmodule Medea.FormatterTest do
       assert %{"user_id" => 1, "admin" => true, "thing" => ["a", "b"]} = meta
     end
 
+    test "formatting IO-data messages with inner quotes" do
+      message = ["{", "\"args\"", ":", "{}", "}"]
+
+      assert %{"message" => %{"args" => %{}}} = format(:info, message, @datetime)
+    end
+
+    test "formatting IO-data messages that are not JSON" do
+      message = ["hello ", "world"]
+
+      assert %{"message" => "hello world"} = format(:info, message, @datetime)
+    end
+
     test "reporting logging errors" do
       assert %{"error" => error} = format(:info, {:error, :broken}, @datetime)
 

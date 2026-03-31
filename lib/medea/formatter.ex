@@ -21,8 +21,9 @@ defmodule Medea.Formatter do
   rescue
     exception ->
       reason = Exception.format_banner(:error, exception)
+      error = "could not log '#{inspect(message)}' because: #{reason}"
 
-      [~s({"error":"could not log '), inspect(message), "' because: ", reason, ~s("})]
+      [~s({"error":), Jason.encode_to_iodata!(error), ?}]
   end
 
   for key <- ~w(level message time metadata)a do
@@ -31,8 +32,12 @@ defmodule Medea.Formatter do
 
   defp to_val(:level, level), do: Jason.encode_to_iodata!(level)
 
-  defp to_val(:message, ["{\"" | _] = message), do: message
-  defp to_val(:message, message) when is_list(message), do: [?", message, ?"]
+  defp to_val(:message, message) when is_list(message) do
+    binary = IO.iodata_to_binary(message)
+    if String.starts_with?(binary, "{\""), do: binary, else: Jason.encode_to_iodata!(binary)
+  end
+
+  defp to_val(:message, "{\"" <> _ = message), do: message
   defp to_val(:message, message), do: Jason.encode_to_iodata!(message)
 
   defp to_val(:metadata, metadata) do
