@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.4.0 — 2026-03-31
+
+* Fix formatter message handling for Elixir 1.19
+
+  On Elixir 1.19, Logger routes through Erlang's `:logger`, which delivers translated JSON messages
+  wrapped in an extra list layer. This broke the `["{\"" | _]` passthrough pattern, causing IO-data
+  list messages to be wrapped in quotes without escaping inner `"` characters — producing malformed
+  JSON in all log output.
+
+  The IO-data list handling now converts to binary first and checks for pre-encoded JSON, which
+  works on both Elixir 1.17 and 1.19. Also fixes the error rescue clause to properly JSON-encode
+  its output.
+
 ## v0.3.0 — 2025-05-29
 
 * Add escape-hatch for custom key value formatting
